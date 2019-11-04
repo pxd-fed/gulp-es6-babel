@@ -82,7 +82,7 @@ const PATH = {
     }
 }
 
-/** 
+/**
  * TASK : HTML
  */
 gulp.task('html', () => {
@@ -99,7 +99,7 @@ gulp.task('html', () => {
                 .pipe($.connect.reload());
 });
 
-/** 
+/**
  * TASK : CSS
  */
 gulp.task('css', () => {
@@ -134,7 +134,7 @@ gulp.task('css', () => {
 //                 .pipe($.connect.reload());
 // });
 
-/** 
+/**
  * TASK : JS
  */
 gulp.task('script', () => {
@@ -152,7 +152,7 @@ gulp.task('script', () => {
     .pipe($.connect.reload());
 })
 
-/** 
+/**
  * TASK : IMAGE
  */
 gulp.task('images', () => {
@@ -213,10 +213,17 @@ gulp.task('watch', () => {
 });
 
 /**
- * Default Build
+ * Default Local Build
  */
 
 gulp.task('default', ['clean', 'connect', 'html', 'css', 'script', 'images', 'fonts', 'files', 'watch'], () => {
     console.log('Gulp is running');
-})
+});
 
+/**
+ * Jenkins Build
+ */
+
+gulp.task('build', ['clean', 'html', 'css', 'script', 'images', 'fonts', 'files'], () => {
+    console.log('Gulp is Build Complete');
+});
