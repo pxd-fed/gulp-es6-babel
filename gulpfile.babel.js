@@ -9,14 +9,14 @@ const $ = plugins({
     scope : ['devDependencies']
 });
 
-console.log($)
+console.log($);
 
 const onError = (err) => console.log(err);
 
 /**
  *  CHARACTER SET
  */
-var encoding = 'UTF-8';
+const encoding = 'UTF-8';
 
 /**
  *  SET PATH
@@ -25,7 +25,7 @@ const DIR = {
     SRC : 'src',
     BUILD : 'build',
     // DIST : 'dist'
-}
+};
 
 const BASE = {
     SCRIPT : '/assets/js/',
@@ -35,7 +35,7 @@ const BASE = {
     FONTS : '/assets/fonts/',
     FILES : '/assets/',
     HTML : '/html/'
-}
+};
 
 const PATH = {
     SCRIPT : {
@@ -86,6 +86,7 @@ const PATH = {
  * TASK : HTML
  */
 gulp.task('html', () => {
+    console.log('html');
     return gulp.src([PATH.HTML.SRC + '**/*.html', '!' + PATH.HTML.SRC + '/include/**/*.html'], {base : ''})
                 .pipe($.newer(PATH.HTML.BUILD))
                 .pipe($.fileInclude({
@@ -100,9 +101,10 @@ gulp.task('html', () => {
 });
 
 /**
- * TASK : CSS
+ * TASK : CSS (SCSS)
  */
 gulp.task('css', () => {
+    console.log('css');
     return $.mergeStream(
         gulp.src([PATH.SCSS.TARGET, '!/**/_*.scss'])
             .pipe($.newer(PATH.CSS.BUILD))
@@ -138,6 +140,7 @@ gulp.task('css', () => {
  * TASK : JS
  */
 gulp.task('script', () => {
+    console.log('script');
     return $.mergeStream(
         gulp.src([PATH.SCRIPT.TARGET, '!'+PATH.SCRIPT.SRC + '/**/libs/*.js', '!'+PATH.SCRIPT.SRC + '/**/*.min.js'], {sourcemaps : true})
             .pipe($.newer(PATH.SCRIPT.BUILD))
@@ -156,6 +159,7 @@ gulp.task('script', () => {
  * TASK : IMAGE
  */
 gulp.task('images', () => {
+    console.log('images');
     return gulp.src([PATH.IMAGES.TARGET])
                 .pipe($.newer(PATH.IMAGES.BUILD))
                 .pipe($.imagemin())
@@ -167,6 +171,7 @@ gulp.task('images', () => {
  * TASK : Fonts
  */
 gulp.task('fonts', () => {
+    console.log('fonts');
     return gulp.src([PATH.FONTS.TARGET])
                 .pipe($.newer(PATH.FONTS.BUILD))
                 .pipe(gulp.dest(PATH.FONTS.BUILD))
@@ -177,6 +182,7 @@ gulp.task('fonts', () => {
  * ETC - Files
  */
 gulp.task('files', () => {
+    console.log('files');
     return gulp.src([PATH.FILES.TARGET])
                 .pipe($.newer(PATH.FILES.BUILD))
                 .pipe(gulp.dest(PATH.FILES.BUILD))
@@ -186,7 +192,7 @@ gulp.task('files', () => {
 /**
  * Clean
  */
-gulp.task('clean', () => {
+gulp.task('clean', async () => {
     return $.del.sync([DIR.BUILD]);
 });
 
@@ -194,7 +200,8 @@ gulp.task('clean', () => {
  * Run Server
  * LiveReload
  */
-gulp.task('connect', () => {
+gulp.task('connect', async () => {
+    console.log('connect');
     $.connect.server({
         root : DIR.BUILD,
         livereload : true,
@@ -205,18 +212,19 @@ gulp.task('connect', () => {
 /**
  * Watch
  */
-gulp.task('watch', () => {
-    gulp.watch([PATH.HTML.TARGET], {cwd:'./'}, ['html']);
-    gulp.watch([PATH.CSS.TARGET, PATH.SCSS.TARGET], {cwd:'./'}, ['css']);
-    gulp.watch([PATH.SCRIPT.TARGET], {cwd:'./'}, ['script']);
-    gulp.watch([PATH.IMAGES.TARGET], {cwd:'./'}, ['images']);
+gulp.task('watch', async () => {
+    console.log('watch');
+    gulp.watch([PATH.HTML.TARGET], {cwd:'./'}, gulp.series('html'));
+    gulp.watch([PATH.CSS.TARGET, PATH.SCSS.TARGET], {cwd:'./'}, gulp.series('css'));
+    gulp.watch([PATH.SCRIPT.TARGET], {cwd:'./'}, gulp.series('script'));
+    gulp.watch([PATH.IMAGES.TARGET], {cwd:'./'}, gulp.series('images'));
 });
 
 /**
  * Default Local Build
  */
 
-gulp.task('default', ['clean', 'connect', 'html', 'css', 'script', 'images', 'fonts', 'files', 'watch'], () => {
+gulp.task('default', gulp.series('clean', gulp.parallel('connect', 'html', 'css', 'script', 'images', 'fonts', 'files', 'watch')), () => {
     console.log('Gulp is running');
 });
 
@@ -224,6 +232,6 @@ gulp.task('default', ['clean', 'connect', 'html', 'css', 'script', 'images', 'fo
  * Jenkins Build
  */
 
-gulp.task('build', ['clean', 'html', 'css', 'script', 'images', 'fonts', 'files'], () => {
+gulp.task('build', gulp.series('clean', gulp.parallel('html', 'css', 'script', 'images', 'fonts', 'files')), () => {
     console.log('Gulp is Build Complete');
 });
