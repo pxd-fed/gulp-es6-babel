@@ -214,10 +214,10 @@ gulp.task('connect', async () => {
  */
 gulp.task('watch', async () => {
     console.log('watch');
-    gulp.watch([PATH.HTML.TARGET], {cwd:'./'}, gulp.series('html'));
-    gulp.watch([PATH.CSS.TARGET, PATH.SCSS.TARGET], {cwd:'./'}, gulp.series('css'));
-    gulp.watch([PATH.SCRIPT.TARGET], {cwd:'./'}, gulp.series('script'));
-    gulp.watch([PATH.IMAGES.TARGET], {cwd:'./'}, gulp.series('images'));
+    gulp.watch([PATH.HTML.TARGET], {cwd:'./', events: 'all'}, gulp.series('html'));
+    gulp.watch([PATH.CSS.TARGET, PATH.SCSS.TARGET], {cwd:'./', events: 'all'}, gulp.series('css'));
+    gulp.watch([PATH.SCRIPT.TARGET], {cwd:'./', events: 'all'}, gulp.series('script'));
+    gulp.watch([PATH.IMAGES.TARGET], {cwd:'./', events: 'all'}, gulp.series('images'));
 });
 
 /**
